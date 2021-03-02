@@ -83,11 +83,10 @@ func TestAddSpManagementTokenVisitor_RefreshedError(t *testing.T) {
 
 func TestGetClientSecretAuthorizer(t *testing.T) {
 	aa := AzureAuth{}
-	auth, err := aa.getClientSecretAuthorizer("x")
-	require.NoError(t, err, err.Error())
-	require.NotNil(t, auth)
+	_, err := aa.getClientSecretAuthorizer("x")
+	require.EqualError(t, err, "failed to get oauth token from MSI: MSI not available")
 
-	auth, err = aa.getClientSecretAuthorizer(AzureDatabricksResourceID)
+	auth, err := aa.getClientSecretAuthorizer(AzureDatabricksResourceID)
 	require.Nil(t, auth)
 	require.EqualError(t, err, "parameter 'clientID' cannot be empty")
 
@@ -132,7 +131,7 @@ func TestAcquirePAT_CornerCases(t *testing.T) {
 	assert.EqualError(t, err, "DatabricksClient is not configured")
 
 	aa.databricksClient = &DatabricksClient{}
-	aa.temporaryPat = &TokenResponse{
+	aa.temporaryPat = &tokenResponse{
 		TokenValue: "...",
 	}
 	auth, rre := aa.acquirePAT(context.Background(), func(resource string) (autorest.Authorizer, error) {
