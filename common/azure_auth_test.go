@@ -83,9 +83,6 @@ func TestAddSpManagementTokenVisitor_RefreshedError(t *testing.T) {
 
 func TestGetClientSecretAuthorizer(t *testing.T) {
 	aa := AzureAuth{}
-	_, err := aa.getClientSecretAuthorizer("x")
-	require.EqualError(t, err, "failed to get oauth token from MSI: MSI not available")
-
 	auth, err := aa.getClientSecretAuthorizer(AzureDatabricksResourceID)
 	require.Nil(t, auth)
 	require.EqualError(t, err, "parameter 'clientID' cannot be empty")
